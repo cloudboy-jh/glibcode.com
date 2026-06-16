@@ -1,0 +1,200 @@
+---
+import '../styles/global.css';
+import Github from 'lucide-astro/Github';
+import BookOpen from 'lucide-astro/BookOpen';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>glib-code</title>
+    <meta name="description" content="A workspace where agents code in a sandbox. Your real code stays untouched until you approve." />
+    <meta property="og:title" content="glib-code" />
+    <meta property="og:description" content="A workspace where agents code in a sandbox. Your real code stays untouched until you approve." />
+    <meta property="og:image" content="/icon.png" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+
+    <main class="min-h-screen flex flex-col items-center justify-center gap-6 p-8">
+
+      <!-- Hero icon -->
+      <div class="relative icon-hero">
+        <!-- Soft glow/shadow beneath the icon -->
+        <div
+          class="absolute inset-0 rounded-3xl blur-2xl scale-75 translate-y-6 opacity-30"
+          style="background: radial-gradient(ellipse at center, #555 0%, transparent 70%);"
+          aria-hidden="true"
+        ></div>
+        <img
+          src="/icon.png"
+          alt=""
+          class="relative h-36 md:h-44 select-none drop-shadow-2xl"
+          draggable="false"
+          aria-hidden="true"
+        />
+      </div>
+
+      <!-- Wordmark -->
+      <img
+        src="/glibcode-wordmark.png"
+        alt="glib-code"
+        class="h-9 md:h-11 select-none opacity-90"
+        draggable="false"
+      />
+
+      <!-- Tagline -->
+      <p class="text-muted-foreground text-sm md:text-base text-center max-w-sm leading-relaxed tracking-wide">
+        A workspace where agents code in a sandbox.<br />Your real code stays untouched until you approve.
+      </p>
+
+      <!-- Buttons -->
+      <div class="flex items-center gap-3 flex-wrap justify-center pt-1">
+
+        <!-- Download — coming soon -->
+        <span
+          class="inline-flex items-center justify-center h-9 px-4 rounded-md
+                 text-muted-foreground font-medium text-sm
+                 border border-dashed border-border
+                 cursor-not-allowed select-none opacity-60"
+          aria-disabled="true"
+          title="Coming soon"
+        >
+          Download
+        </span>
+
+        <!-- GitHub -->
+        <a
+          href="https://github.com/cloudboy-jh/glib-code"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center h-9 px-4 rounded-md
+                 bg-primary/90 text-primary-foreground font-medium text-sm
+                 hover:bg-primary
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+                 transition-colors"
+          style="box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08), 0 1px 3px hsl(0 0% 0% / 0.4);"
+        >
+          <Github size={15} class="mr-1.5" />GitHub
+        </a>
+
+        <!-- Docs -->
+        <a
+          href="https://glib-code-docs.pages.dev/"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center justify-center h-9 px-4 rounded-md
+                 bg-primary/90 text-primary-foreground font-medium text-sm
+                 hover:bg-primary
+                 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background
+                 transition-colors"
+          style="box-shadow: inset 0 1px 0 hsl(0 0% 100% / 0.08), 0 1px 3px hsl(0 0% 0% / 0.4);"
+        >
+          <BookOpen size={15} class="mr-1.5" />Docs
+        </a>
+
+      </div>
+
+      <!-- Screenshots -->
+      <div class="flex gap-4 w-full max-w-5xl mt-6 px-2">
+        <button
+          data-modal-src="/screenshots/session.png"
+          data-modal-alt="glib-code session view"
+          class="flex-1 rounded-lg overflow-hidden border border-border/50 shadow-2xl cursor-zoom-in
+                 hover:border-border transition-colors group"
+        >
+          <img src="/screenshots/session.png" alt="glib-code session view" class="w-full block group-hover:opacity-90 transition-opacity" draggable="false" />
+        </button>
+        <button
+          data-modal-src="/screenshots/diffs.png"
+          data-modal-alt="glib-code diff review"
+          class="flex-1 rounded-lg overflow-hidden border border-border/50 shadow-2xl cursor-zoom-in
+                 hover:border-border transition-colors group"
+        >
+          <img src="/screenshots/diffs.png" alt="glib-code diff review" class="w-full block group-hover:opacity-90 transition-opacity" draggable="false" />
+        </button>
+      </div>
+
+    </main>
+
+    <!-- Modal -->
+    <div
+      id="modal"
+      class="fixed inset-0 z-50 flex items-center justify-center p-8"
+      style="display: none;"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Screenshot preview"
+    >
+      <!-- Backdrop -->
+      <div id="modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <!-- Content -->
+      <div class="relative z-10 max-w-6xl w-full">
+        <button
+          id="modal-close"
+          class="absolute -top-10 right-0 text-muted-foreground hover:text-foreground transition-colors text-sm"
+          aria-label="Close"
+        >
+          ESC to close
+        </button>
+        <img
+          id="modal-img"
+          src=""
+          alt=""
+          class="w-full rounded-lg border border-border/50 shadow-2xl"
+          draggable="false"
+        />
+      </div>
+    </div>
+
+    <footer class="fixed bottom-0 left-0 right-0 p-6 text-sm text-muted-foreground flex justify-between items-center">
+      <span>© 2026 glib-code</span>
+      <a
+        href="https://twitter.com/Jackhortonlol"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="hover:text-foreground transition-colors"
+      >
+        @Jackhortonlol
+      </a>
+    </footer>
+
+    <script>
+      const modal = document.getElementById('modal') as HTMLElement;
+      const modalImg = document.getElementById('modal-img') as HTMLImageElement;
+      const modalBackdrop = document.getElementById('modal-backdrop') as HTMLElement;
+      const modalClose = document.getElementById('modal-close') as HTMLElement;
+
+      function openModal(src: string, alt: string) {
+        modalImg.src = src;
+        modalImg.alt = alt;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+
+      document.querySelectorAll<HTMLButtonElement>('[data-modal-src]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          openModal(btn.dataset.modalSrc!, btn.dataset.modalAlt!);
+        });
+      });
+
+      modalBackdrop.addEventListener('click', closeModal);
+      modalClose.addEventListener('click', closeModal);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeModal();
+      });
+    </script>
+
+  </body>
+</html>
