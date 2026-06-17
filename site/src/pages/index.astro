@@ -2,6 +2,11 @@
 import '../styles/global.css';
 import Github from 'lucide-astro/Github';
 import BookOpen from 'lucide-astro/BookOpen';
+import ChevronDown from 'lucide-astro/ChevronDown';
+import FolderOpen from 'lucide-astro/FolderOpen';
+import Bot from 'lucide-astro/Bot';
+import GitCompare from 'lucide-astro/GitCompare';
+import Box from 'lucide-astro/Box';
 ---
 
 <!doctype html>
@@ -18,17 +23,53 @@ import BookOpen from 'lucide-astro/BookOpen';
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Apply persisted theme before paint to avoid FOUC. Two themes only. -->
+    <script is:inline>
+      (function () {
+        try {
+          var t = localStorage.getItem('glib-theme');
+          t = (t === 'minimal-paper') ? 'minimal-paper' : 'minimal-dark';
+          document.documentElement.setAttribute('data-theme', t);
+        } catch (e) {
+          document.documentElement.setAttribute('data-theme', 'minimal-dark');
+        }
+      })();
+    </script>
   </head>
   <body>
 
-    <main class="min-h-screen flex flex-col items-center justify-center gap-6 p-8">
+    <!-- Header with site theme toggle -->
+    <header class="fixed top-0 left-0 right-0 z-20 p-6 flex justify-end items-center">
+      <div
+        role="group"
+        aria-label="Site theme"
+        class="inline-flex items-center rounded-md border border-border/60 p-1 gap-1 bg-background/40 backdrop-blur-sm"
+      >
+        <button
+          data-theme-set="minimal-dark"
+          aria-pressed="true"
+          class="theme-pill px-2.5 h-7 rounded text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Dark
+        </button>
+        <button
+          data-theme-set="minimal-paper"
+          aria-pressed="false"
+          class="theme-pill px-2.5 h-7 rounded text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Paper
+        </button>
+      </div>
+    </header>
+
+    <!-- Hero section -->
+    <section class="min-h-screen flex flex-col items-center justify-center gap-6 p-8 relative">
 
       <!-- Hero icon -->
       <div class="relative icon-hero">
-        <!-- Soft glow/shadow beneath the icon -->
         <div
           class="absolute inset-0 rounded-3xl blur-2xl scale-75 translate-y-6 opacity-30"
-          style="background: radial-gradient(ellipse at center, #555 0%, transparent 70%);"
+          style="background: radial-gradient(ellipse at center, hsl(var(--glow)) 0%, transparent 70%);"
           aria-hidden="true"
         ></div>
         <img
@@ -56,19 +97,16 @@ import BookOpen from 'lucide-astro/BookOpen';
       <!-- Buttons -->
       <div class="flex items-center gap-3 flex-wrap justify-center pt-1">
 
-        <!-- Download — coming soon -->
-        <span
+        <a
+          href="/install"
           class="inline-flex items-center justify-center h-9 px-4 rounded-md
                  text-muted-foreground font-medium text-sm
-                 border border-dashed border-border
-                 cursor-not-allowed select-none opacity-60"
-          aria-disabled="true"
-          title="Coming soon"
+                 border border-border
+                 hover:text-foreground hover:border-border/80 transition-colors"
         >
           Download
-        </span>
+        </a>
 
-        <!-- GitHub -->
         <a
           href="https://github.com/cloudboy-jh/glib-code"
           target="_blank"
@@ -83,7 +121,6 @@ import BookOpen from 'lucide-astro/BookOpen';
           <Github size={15} class="mr-1.5" />GitHub
         </a>
 
-        <!-- Docs -->
         <a
           href="https://glib-code-docs.pages.dev/"
           target="_blank"
@@ -120,7 +157,205 @@ import BookOpen from 'lucide-astro/BookOpen';
         </button>
       </div>
 
-    </main>
+      <!-- Chevron -->
+      <button
+        id="scroll-chevron"
+        aria-label="Scroll to features"
+        class="mt-10 text-muted-foreground/40 hover:text-muted-foreground transition-colors chevron-bounce"
+      >
+        <ChevronDown size={24} />
+      </button>
+
+    </section>
+
+    <!-- Features section -->
+    <section id="features" class="flex flex-col items-center px-8 pt-32 pb-40">
+      <div class="grid grid-cols-2 gap-x-20 gap-y-16 max-w-3xl w-full">
+
+        <!-- Repo Picker -->
+        <div class="flex flex-col gap-4">
+          <div class="text-muted-foreground/50">
+            <FolderOpen size={24} />
+          </div>
+          <h3 class="text-base font-semibold text-foreground tracking-tight">Repo Picker</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Open any local Git repo. Browse commit history and inspect current working changes before the agent touches a single file.
+          </p>
+        </div>
+
+        <!-- Session -->
+        <div class="flex flex-col gap-4">
+          <div class="text-muted-foreground/50">
+            <Bot size={24} />
+          </div>
+          <h3 class="text-base font-semibold text-foreground tracking-tight">Session</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Prompt the agent and watch it work in real time. Use <span class="text-foreground/70 font-mono text-xs">/tree</span> to inject the full repo file tree into context, or <span class="text-foreground/70 font-mono text-xs">/stop</span> to abort mid-run. Bring your own provider key — Anthropic, OpenAI, or anything else.
+          </p>
+        </div>
+
+        <!-- Diffs -->
+        <div class="flex flex-col gap-4">
+          <div class="text-muted-foreground/50">
+            <GitCompare size={24} />
+          </div>
+          <h3 class="text-base font-semibold text-foreground tracking-tight">Diffs</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Every file the agent touched, side by side. Split and unified views powered by{' '}
+            <a href="https://diffs.com/" target="_blank" rel="noopener noreferrer" class="text-foreground/80 hover:text-foreground underline underline-offset-2 transition-colors">Diffs</a>.
+            Nothing lands in your real repo until you've read every line.
+          </p>
+        </div>
+
+        <!-- Gittrix -->
+        <div class="flex flex-col gap-4">
+          <div class="text-muted-foreground/50">
+            <Box size={24} />
+          </div>
+          <h3 class="text-base font-semibold text-foreground tracking-tight">Gittrix</h3>
+          <p class="text-sm text-muted-foreground leading-relaxed">
+            Every session runs in an isolated{' '}
+            <a href="https://gittrix.com/" target="_blank" rel="noopener noreferrer" class="text-foreground/80 hover:text-foreground underline underline-offset-2 transition-colors">Gittrix</a>{' '}
+            sandbox — a detached git worktree the agent owns entirely. Your real checkout never changes until you selectively promote the files you want.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Themes section -->
+    <section id="themes" class="flex flex-col items-center px-8 pt-32 pb-40 gap-10">
+
+      <!-- Themes hero -->
+      <div class="flex flex-col items-center gap-4 text-center max-w-xl">
+        <span class="text-xs font-mono text-muted-foreground/60 border border-border/50 rounded px-2 py-0.5">house themes</span>
+        <h2 class="text-2xl md:text-3xl font-semibold text-foreground tracking-tight">
+          <!-- TODO: final headline copy -->
+          Two favorites. A whole catalog.
+        </h2>
+        <p class="text-sm md:text-base text-muted-foreground leading-relaxed max-w-sm">
+          <!-- TODO: final subcopy -->
+          Minimal Dark and Minimal Paper are glib's house pair — a matched screen-and-paper set we designed in-house and ship up front. They're the face of a full theme catalog inside the editor, and it keeps growing. Toggle below to reskin this page live.
+        </p>
+      </div>
+
+      <!-- Featured theme toggle (binary) -->
+      <div
+        role="group"
+        aria-label="Site theme"
+        class="inline-flex items-center rounded-md border border-border/60 p-1 gap-1"
+      >
+        <button
+          data-theme-set="minimal-dark"
+          aria-pressed="true"
+          class="theme-pill px-3 h-8 rounded text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Minimal Dark
+        </button>
+        <button
+          data-theme-set="minimal-paper"
+          aria-pressed="false"
+          class="theme-pill px-3 h-8 rounded text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+        >
+          Minimal Paper
+        </button>
+      </div>
+
+      <!-- Toggle helper text -->
+      <p class="text-xs text-muted-foreground/60 text-center max-w-sm">
+        Site preview shows our two house themes. The full catalog lives in the editor.{' '}
+        {/* TODO: wire real catalog/app URL */}
+        <a
+          href="#"
+          class="text-foreground/80 hover:text-foreground underline underline-offset-2 transition-colors"
+        >
+          browse in glib ↗
+        </a>
+      </p>
+
+      <!-- Side-by-side preview of the glib review surface in both themes -->
+      <h2 class="sr-only">Side-by-side preview of the glib review surface in the Minimal Dark theme and the Minimal Paper theme, with base ramp and accent swatches for each.</h2>
+      <div class="w-full max-w-3xl" style="display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:14px; font-family:'DM Sans',system-ui,sans-serif;">
+
+        <!-- Minimal Dark preview -->
+        <div>
+          <div class="text-muted-foreground" style="font-size:12px; letter-spacing:.04em; margin:0 0 8px 2px; text-transform:uppercase;">Minimal Dark</div>
+          <div style="background:#161616; border:1px solid #262626; border-radius:8px; overflow:hidden;">
+            <div style="display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid #262626;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#E6E6E6;"></span>
+              <span style="font-size:13px; color:#E6E6E6; font-weight:500;">glib · review</span>
+              <span style="margin-left:auto; font-size:12px; color:#7A7873; font-family:ui-monospace,'DM Mono',monospace;">feat/warm-light</span>
+            </div>
+            <div style="padding:8px 12px; font-family:ui-monospace,'DM Mono',SFMono-Regular,monospace; font-size:12px; line-height:1.7;">
+              <div style="color:#7A7873;">src/theme/tokens.ts</div>
+              <div style="color:#8C8A85;">  export const surface = {'{'}</div>
+              <div style="background:rgba(209,77,65,.13); color:#D14D41;">-&nbsp;&nbsp;bg: "#000000",</div>
+              <div style="background:rgba(135,154,57,.13); color:#879A39;">+&nbsp;&nbsp;bg: "#0D0D0D",</div>
+              <div style="color:#8C8A85;">  {'}'}</div>
+            </div>
+            <div style="display:flex; gap:8px; padding:10px 12px; border-top:1px solid #262626;">
+              <button style="margin-left:auto; font-size:12px; padding:5px 12px; border-radius:5px; border:1px solid #2E2E2E; background:transparent; color:#B5B3AD;">Discard</button>
+              <button style="font-size:12px; padding:5px 12px; border-radius:5px; border:1px solid #E6E6E6; background:#E6E6E6; color:#0D0D0D; font-weight:500;">Promote</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:4px; margin-top:8px; align-items:center;">
+            <span style="width:20px;height:14px;border-radius:3px;border:1px solid #2A2A2A;background:#0D0D0D;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#161616;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#262626;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#7A7873;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#E6E6E6;"></span>
+            <span style="width:1px;height:14px;background:#333; margin:0 4px;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#D14D41;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#DA702C;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#879A39;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#3AA99F;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#4385BE;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#8B7EC8;"></span>
+            <span class="text-muted-foreground/50" style="font-size:11px; margin-left:4px; font-family:ui-monospace,monospace;">400s</span>
+          </div>
+        </div>
+
+        <!-- Minimal Paper preview -->
+        <div>
+          <div class="text-muted-foreground" style="font-size:12px; letter-spacing:.04em; margin:0 0 8px 2px; text-transform:uppercase;">Minimal Paper</div>
+          <div style="background:#F2F0E5; border:1px solid #CECDC3; border-radius:8px; overflow:hidden;">
+            <div style="display:flex; align-items:center; gap:8px; padding:10px 12px; background:#FFFCF0; border-bottom:1px solid #CECDC3;">
+              <span style="width:8px; height:8px; border-radius:50%; background:#100F0F;"></span>
+              <span style="font-size:13px; color:#100F0F; font-weight:500;">glib · review</span>
+              <span style="margin-left:auto; font-size:12px; color:#878580; font-family:ui-monospace,'DM Mono',monospace;">feat/warm-light</span>
+            </div>
+            <div style="padding:8px 12px; background:#FFFCF0; font-family:ui-monospace,'DM Mono',SFMono-Regular,monospace; font-size:12px; line-height:1.7;">
+              <div style="color:#878580;">src/theme/tokens.ts</div>
+              <div style="color:#575653;">  export const surface = {'{'}</div>
+              <div style="background:#FFE1D5; color:#AF3029;">-&nbsp;&nbsp;bg: "#000000",</div>
+              <div style="background:#EDEECF; color:#66800B;">+&nbsp;&nbsp;bg: "#0D0D0D",</div>
+              <div style="color:#575653;">  {'}'}</div>
+            </div>
+            <div style="display:flex; gap:8px; padding:10px 12px; background:#FFFCF0; border-top:1px solid #CECDC3;">
+              <button style="margin-left:auto; font-size:12px; padding:5px 12px; border-radius:5px; border:1px solid #B7B5AC; background:transparent; color:#575653;">Discard</button>
+              <button style="font-size:12px; padding:5px 12px; border-radius:5px; border:1px solid #100F0F; background:#100F0F; color:#FFFCF0; font-weight:500;">Promote</button>
+            </div>
+          </div>
+          <div style="display:flex; gap:4px; margin-top:8px; align-items:center;">
+            <span style="width:20px;height:14px;border-radius:3px;border:1px solid #CECDC3;background:#FFFCF0;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#F2F0E5;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#E6E4D9;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#878580;"></span>
+            <span style="width:20px;height:14px;border-radius:3px;background:#100F0F;"></span>
+            <span style="width:1px;height:14px;background:#CECDC3; margin:0 4px;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#AF3029;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#BC5215;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#66800B;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#24837B;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#205EA6;"></span>
+            <span style="width:14px;height:14px;border-radius:50%;background:#5E409D;"></span>
+            <span class="text-muted-foreground/50" style="font-size:11px; margin-left:4px; font-family:ui-monospace,monospace;">600s</span>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
 
     <!-- Modal -->
     <div
@@ -131,9 +366,7 @@ import BookOpen from 'lucide-astro/BookOpen';
       aria-modal="true"
       aria-label="Screenshot preview"
     >
-      <!-- Backdrop -->
       <div id="modal-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
-      <!-- Content -->
       <div class="relative z-10 max-w-6xl w-full">
         <button
           id="modal-close"
@@ -190,9 +423,45 @@ import BookOpen from 'lucide-astro/BookOpen';
 
       modalBackdrop.addEventListener('click', closeModal);
       modalClose.addEventListener('click', closeModal);
-
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeModal();
+      });
+
+      // Chevron fade on scroll
+      const chevron = document.getElementById('scroll-chevron') as HTMLElement;
+      chevron.addEventListener('click', () => {
+        document.getElementById('features')!.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', () => {
+        const scrolled = window.scrollY > 80;
+        chevron.style.opacity = scrolled ? '0' : '1';
+        chevron.style.pointerEvents = scrolled ? 'none' : 'auto';
+      }, { passive: true });
+
+      // ---- Site theme toggle (binary: minimal-dark | minimal-paper) ----
+      const ROOT = document.documentElement;
+      const STORE = 'glib-theme';
+      const THEMES = ['minimal-dark', 'minimal-paper'] as const;
+      type Theme = typeof THEMES[number];
+
+      function applyTheme(t: string) {
+        const theme: Theme = THEMES.includes(t as Theme) ? (t as Theme) : 'minimal-dark';
+        ROOT.setAttribute('data-theme', theme);
+        document.querySelectorAll<HTMLButtonElement>('[data-theme-set]').forEach(btn => {
+          btn.setAttribute('aria-pressed', String(btn.dataset.themeSet === theme));
+        });
+      }
+
+      // Sync UI with whatever the head script already applied.
+      applyTheme(ROOT.getAttribute('data-theme') || 'minimal-dark');
+
+      document.querySelectorAll<HTMLButtonElement>('[data-theme-set]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.themeSet!;
+          try { localStorage.setItem(STORE, t); } catch (e) { /* ignore */ }
+          applyTheme(t);
+        });
       });
     </script>
 

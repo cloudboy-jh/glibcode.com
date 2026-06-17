@@ -2,7 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* ------------------------------------------------------------------
+   Theme tokens
+   Two site themes only: "minimal-dark" (default) and "minimal-paper".
+   Applied via data-theme on <html>. Same token keys in both sets so
+   the whole page reskins on toggle. Monochrome grayscale — no accent.
+   ------------------------------------------------------------------ */
+
+:root,
+[data-theme="minimal-dark"] {
   --background: 0 0% 9%;
   --foreground: 0 0% 95%;
   --primary: 0 0% 70%;
@@ -11,6 +19,23 @@
   --muted-foreground: 0 0% 65%;
   --border: 0 0% 20%;
   --ring: 0 0% 70%;
+  --canvas: 0 0% 5%;
+  --canvas-glow: 0 0% 12%;
+  --glow: 0 0% 33%;
+}
+
+[data-theme="minimal-paper"] {
+  --background: 48 100% 97%;      /* paper #FFFCF0 */
+  --foreground: 0 3% 6%;          /* ink #100F0F */
+  --primary: 0 3% 6%;             /* ink action — monochrome */
+  --primary-foreground: 48 100% 97%;
+  --muted: 51 33% 92%;            /* well #F2F0E5 */
+  --muted-foreground: 45 2% 33%;  /* secondary #575653 */
+  --border: 55 10% 79%;           /* hairline #CECDC3 */
+  --ring: 0 3% 6%;
+  --canvas: 48 100% 97%;
+  --canvas-glow: 51 33% 92%;
+  --glow: 55 10% 79%;
 }
 
 html, body {
@@ -18,9 +43,9 @@ html, body {
 }
 
 body {
-  background-color: #0d0d0d;
+  background-color: hsl(var(--canvas));
   background-image:
-    radial-gradient(ellipse 80% 60% at 50% 40%, #1f1f1f 0%, #0d0d0d 100%);
+    radial-gradient(ellipse 80% 60% at 50% 40%, hsl(var(--canvas-glow)) 0%, hsl(var(--canvas)) 100%);
   color: hsl(var(--foreground));
   font-family: 'DM Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -50,6 +75,20 @@ main, footer {
   background: hsl(var(--primary) / 0.35);
 }
 
+/* Chevron scroll indicator */
+#scroll-chevron {
+  transition: opacity 0.3s ease;
+}
+
+@keyframes chevronBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(5px); }
+}
+
+.chevron-bounce {
+  animation: chevronBounce 2s ease-in-out infinite;
+}
+
 /* Icon entrance animation */
 @keyframes iconIn {
   from {
@@ -64,4 +103,10 @@ main, footer {
 
 .icon-hero {
   animation: iconIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Theme toggle — binary, two states only */
+.theme-pill[aria-pressed="true"] {
+  background-color: hsl(var(--primary) / 0.15);
+  color: hsl(var(--foreground));
 }
