@@ -10,7 +10,7 @@ import ArrowLeft from 'lucide-astro/ArrowLeft';
 import Copy from 'lucide-astro/Copy';
 
 // Fetch latest release from GitHub API at build time
-let release = { tag_name: 'v0.1.0', assets: [] as any[] };
+let release = { tag_name: 'v1.0.0', assets: [] as any[] };
 try {
   const res = await fetch('https://api.github.com/repos/cloudboy-jh/glib-code/releases/latest', {
     headers: { 'Accept': 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
@@ -21,6 +21,8 @@ try {
 }
 
 const version = release.tag_name;
+// asset filenames use the bare semver (no leading `v`)
+const ver = version.replace(/^v/, '');
 
 function asset(pattern: RegExp): string {
   const found = release.assets?.find((a: any) => pattern.test(a.name));
@@ -31,13 +33,13 @@ function asset(pattern: RegExp): string {
 
 // resolve each asset URL
 const winUrl        = release.assets?.find((a: any) => /Setup.*\.exe$/.test(a.name) && !a.name.endsWith('.blockmap'))?.browser_download_url
-                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-Setup-0.1.0.exe`;
+                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-Setup-${ver}.exe`;
 const macArmUrl     = release.assets?.find((a: any) => /arm64\.dmg$/.test(a.name))?.browser_download_url
-                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-0.1.0-arm64.dmg`;
+                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-${ver}-arm64.dmg`;
 const linuxAppUrl   = release.assets?.find((a: any) => /\.AppImage$/.test(a.name))?.browser_download_url
-                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-0.1.0-x86_64.AppImage`;
+                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-${ver}-x86_64.AppImage`;
 const linuxDebUrl   = release.assets?.find((a: any) => /\.deb$/.test(a.name))?.browser_download_url
-                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-0.1.0-amd64.deb`;
+                      ?? `https://github.com/cloudboy-jh/glib-code/releases/download/${version}/glib-code-${ver}-amd64.deb`;
 
 const winSize       = release.assets?.find((a: any) => /Setup.*\.exe$/.test(a.name) && !a.name.endsWith('.blockmap'))?.size;
 const macArmSize    = release.assets?.find((a: any) => /arm64\.dmg$/.test(a.name))?.size;
@@ -55,7 +57,7 @@ function mb(bytes?: number) {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Install — glib-code</title>
+    <title>Install · glib-code</title>
     <meta name="description" content="Download glib-code for Windows, Mac, or Linux. Or self-host from source." />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
